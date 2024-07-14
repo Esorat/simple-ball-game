@@ -4,8 +4,9 @@ use rand::prelude::*;
 
 pub const PLAYER_SIZE: f32 = 64.0; // this player sprite size.
 pub const PLAYER_SPEED: f32 = 500.0; // this player speed.
-pub const NUMBER_OF_ENEMIES: usize = 4;
-pub const ENEMY_SPEED: f32 = 200.0;
+pub const NUMBER_OF_ENEMIES: usize = 4; //this numbers of spawn enemys.
+pub const ENEMY_SPEED: f32 = 200.0; //this enemy speed.
+pub const ENEMY_SIZE: f32 = 64.0; //this enemy size.
 
 
 fn main() {
@@ -16,6 +17,7 @@ fn main() {
     .add_system(player_movement)
     .add_system(confine_player_movement)
     .add_system(enemy_movement)
+    .add_system(update_enemy_direction)
     
     .run();
 }
@@ -156,4 +158,29 @@ pub fn enemy_movement(
         let direction = Vec3::new(enemy.direction.x, enemy.direction.y, 0.0 );
         transform.translation += direction * ENEMY_SPEED *time.delta_seconds();
     }
+}
+
+pub fn update_enemy_direction(
+ mut enemy_query: Query<(&Transform,  &mut Enemy )>,
+ window_query: Query<&Window, With<PrimaryWindow>>
+
+) {
+    let window = window_query.get_single().unwrap();
+
+    let half_player_size: f32 = ENEMY_SIZE / 2.0; //32.0
+    let x_min: f32 = 0.0 + half_player_size;
+    let x_max: f32 = window.width() - half_player_size;
+    let y_min: f32 = 0.0 + half_player_size;
+    let y_max: f32 = window.height() - half_player_size;
+
+    for (transform, mut enemy) in enemy_query.iter_mut() {
+        let traslation: Vec3 = transform.translation;
+
+        if traslation.x < x_min || traslation.x > x_max {
+            enemy.direction.x *= -1.0;
+        }
+        if traslation.y < y_min || traslation.y > y_max {
+            enemy.direction.y *= -1.0;
+        }
+    } 
 }
