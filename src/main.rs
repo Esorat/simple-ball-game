@@ -5,6 +5,7 @@ use rand::prelude::*;
 pub const PLAYER_SIZE: f32 = 64.0; // this player sprite size.
 pub const PLAYER_SPEED: f32 = 500.0; // this player speed.
 pub const NUMBER_OF_ENEMIES: usize = 4;
+pub const ENEMY_SPEED: f32 = 200.0;
 
 
 fn main() {
@@ -14,6 +15,7 @@ fn main() {
     .add_startup_system(spawn_enemies)
     .add_system(player_movement)
     .add_system(confine_player_movement)
+    .add_system(enemy_movement)
     
     .run();
 }
@@ -22,7 +24,9 @@ fn main() {
 pub struct Player {}
 
 #[derive(Component)]
-pub struct Enemy {}
+pub struct Enemy {
+    pub direction: Vec2,
+}
 
 pub fn spawn_player(
     mut commands: Commands, 
@@ -62,8 +66,8 @@ pub fn spawn_enemies(
     let window = window_query.get_single().unwrap();
 
     for _ in 0..NUMBER_OF_ENEMIES {
-        let random_x: f32 = random::<f32>() * window.width();
-        let random_y: f32 = random::<f32>() * window.height();
+        let random_x = random::<f32>() * window.width();
+        let random_y = random::<f32>() * window.height();
 
         commands.spawn(
             (
@@ -72,8 +76,10 @@ pub fn spawn_enemies(
                     texture: asset_server.load("sprites/ball_red_large.png"),
                     ..default()
                 },
-                Enemy {},
-            
+                Enemy {
+                    direction: Vec2::new(random::<f32>(), random::<f32>()).normalize(),
+
+                },
             ));
     }
 }
@@ -139,5 +145,15 @@ pub fn confine_player_movement(
         }
 
         player_transform.translation = translation;
+    }
+}
+
+pub fn enemy_movement(
+    mut enemy_query: Query<(&mut Transform, &Enemy)>,
+    time: Res<Time>
+) {
+    for (mut transform, enemy) in enemy_query.iter_mut() {
+        let direction = Vec3::new(enemy.direction.x, enemy.direction.y, 0.0 );
+        transform.translation += direction * ENEMY_SPEED *time.delta_seconds();
     }
 }
