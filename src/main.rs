@@ -18,6 +18,7 @@ fn main() {
     .add_system(confine_player_movement)
     .add_system(enemy_movement)
     .add_system(update_enemy_direction)
+    .add_system(confine_enemy_movement)
     
     .run();
 }
@@ -183,4 +184,38 @@ pub fn update_enemy_direction(
             enemy.direction.y *= -1.0;
         }
     } 
+}
+
+pub fn confine_enemy_movement(
+mut enemy_query: Query < &mut Transform, With<Enemy>>,
+window_query: Query<&Window, With<PrimaryWindow>>,
+
+) {
+    let window = window_query.get_single().unwrap();
+
+    let half_enemy_size: f32 = ENEMY_SIZE / 2.0; //32.0
+    let x_min: f32 = 0.0 + half_enemy_size;
+    let x_max: f32 = window.width() - half_enemy_size;
+    let y_min: f32 = 0.0 + half_enemy_size;
+    let y_max: f32 = window.height() - half_enemy_size; 
+
+    for mut transform in enemy_query.iter_mut() {
+        let mut translation = transform.translation;
+
+        //Bound enemy X position
+        if translation.x < x_min {
+            translation.x = x_min;
+        } else if translation.x > x_max {
+            translation.x = x_max; 
+        }
+
+        //Bound enemy Y position
+        if translation.y < y_min {
+            translation.y = y_min;
+        } else if translation.y > y_max {
+            translation.y = y_max; 
+        }
+
+        transform.translation = translation;
+    }
 }
