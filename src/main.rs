@@ -2,12 +2,13 @@ use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use rand::prelude::*;
 
-pub const PLAYER_SIZE: f32 = 64.0; // this player sprite size.
-pub const PLAYER_SPEED: f32 = 500.0; // this player speed.
-pub const NUMBER_OF_ENEMIES: usize = 4; //this numbers of spawn enemys.
-pub const ENEMY_SPEED: f32 = 200.0; //this enemy speed.
-pub const ENEMY_SIZE: f32 = 64.0; //this enemy size.
-pub const NUMBER_OF_STARS: usize = 10;
+pub const PLAYER_SIZE: f32 = 64.0; //player sprite size.
+pub const PLAYER_SPEED: f32 = 500.0; //player speed.
+pub const NUMBER_OF_ENEMIES: usize = 4; //numbers of spawn enemys.
+pub const ENEMY_SPEED: f32 = 200.0; //enemy speed.
+pub const ENEMY_SIZE: f32 = 64.0; //enemy size.
+pub const NUMBER_OF_STARS: usize = 10; //number spawn stars.
+pub const STAR_SIZE: f32 = 30.0; //star sprite size.
 
 fn main() {
     App::new()
@@ -22,6 +23,7 @@ fn main() {
         .add_system(update_enemy_direction)
         .add_system(confine_enemy_movement)
         .add_system(enemy_hit_player)
+        .add_system(player_hit_star)
         .run();
 }
 
@@ -271,6 +273,30 @@ pub fn enemy_hit_player(
                 let sound_effect = asset_server.load("assets/audio/explosionCrunch_000.ogg");
                 audio.play(sound_effect);
                 commands.entity(player_entity).despawn();
+            }
+        }
+    }
+}
+
+pub fn player_hit_star(
+    mut commands: Commands,
+    player_query: Query<&Transform, With<Player>>,
+    star_query: Query<(Entity, &Transform), With<Star>>,
+    asset_server: Res<AssetServer>,
+    audio: Res<Audio>,
+) {
+    if let Ok( player_transform) = player_query.get_single() {
+        for (star_entity, star_transform) in star_query.iter() {
+            let distance = player_transform
+                .translation
+                .distance(star_transform.translation);
+            let player_radius = PLAYER_SIZE / 2.0;
+            let star_radius = STAR_SIZE / 2.0;
+            if distance < player_radius + star_radius {
+                println!("Player collect star!");
+                let sound_effect = asset_server.load("audio/laserLarge_000.ogg");
+                audio.play(sound_effect);
+                commands.entity(star_entity).despawn();
             }
         }
     }
