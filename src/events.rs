@@ -1,4 +1,3 @@
-
 pub struct GameOver {
-    pub score: u32
+    pub score: u32,
 }
