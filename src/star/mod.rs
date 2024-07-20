@@ -4,8 +4,8 @@ pub mod componets;
 mod resources;
 mod systems;
 
-use systems::*;
 use resources::*;
+use systems::*;
 
 pub const NUMBER_OF_STARS: usize = 10; //number spawn stars.
 pub const STAR_SIZE: f32 = 30.0; //star sprite size.
