@@ -13,13 +13,11 @@ pub struct ConfineSystemSet;
 
 pub struct PlayerPlugin;
 
-
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-      
         //Startup system
         app.configure_set(MovementSystemSet.before(ConfineSystemSet))
-        .add_startup_system(spawn_player)
+            .add_startup_system(spawn_player)
             //Systems
             .add_system(player_movement.in_set(MovementSystemSet))
             .add_system(confine_player_movement.in_set(ConfineSystemSet))
