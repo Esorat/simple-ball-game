@@ -6,7 +6,7 @@ pub mod score;
 pub mod star;
 mod systems;
 
-use crate::events::GameOver;
+use crate::{events::GameOver, AppState};
 use enemy::EnemyPlugin;
 use player::PlayerPlugin;
 use score::ScorePlugin;
@@ -26,7 +26,7 @@ impl Plugin for GamePlugin {
             .add_plugin(ScorePlugin)
             .add_plugin(StarPlugin)
             //Systems
-            .add_system(toggle_simulation);
+            .add_system(toggle_simulation.run_if(in_state(AppState::Game)));
     }
 }
 
