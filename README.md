@@ -8,6 +8,11 @@ Modular Design: Because why the hell not?
 Getting Started
 To get your sorry ass started with the Bevy Ball Game, you'll need to have Rust installed. If you don’t, go get it here.
 
+Game Key Commands:
+G: Start the game.
+M: Go back to the main menu.
+Escape: Exit the game.
+
 Clone this repository and get your hands dirty:
 
 sh
