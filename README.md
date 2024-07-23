@@ -29,6 +29,4 @@ If you want to contribute, great! Just fork the repo and make a pull request. If
 ### License
 This game is under the MIT License. Do whatever the hell you want with it.
 
-There you go, now slap this in your GitHub repo and watch the stars roll in.
-
 
