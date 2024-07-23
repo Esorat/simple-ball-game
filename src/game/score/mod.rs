@@ -18,7 +18,6 @@ impl Plugin for ScorePlugin {
             .add_system(handle_hight_scores)
             .add_system(high_scores_updated)
             //On exit state
-            .add_system(remove_score.in_schedule(OnExit(AppState::Game)))
-            ;
+            .add_system(remove_score.in_schedule(OnExit(AppState::Game)));
     }
 }

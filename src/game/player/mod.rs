@@ -36,8 +36,6 @@ impl Plugin for PlayerPlugin {
                     .run_if(in_state(AppState::Game))
                     .run_if(in_state(SimulationState::Running)),
             )
-            // .add_system(enemy_hit_player)
-            // .add_system(player_hit_star)
             .add_systems(
                 (enemy_hit_player, player_hit_star)
                     .in_set(OnUpdate(AppState::Game))
